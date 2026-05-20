@@ -1,6 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import heroPrinter from "@/assets/hero-printer.jpg";
+import hpLogo from "@/assets/brands/hp.png";
+import kyoceraLogo from "@/assets/brands/kyocera.png";
+import brotherLogo from "@/assets/brands/brother.png";
+import canonLogo from "@/assets/brands/canon.png";
+import epsonLogo from "@/assets/brands/epson.png";
+import pantumLogo from "@/assets/brands/pantum.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,9 +19,8 @@ import {
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import {
-  Printer, Wrench, Headphones, Package, Wallet, Truck,
-  CheckCircle2, XCircle, Star, MessageCircle, ArrowRight,
-  Instagram, Facebook, Phone,
+  CheckCircle2, XCircle, Star,
+  Instagram, Facebook,
 } from "lucide-react";
 import { z } from "zod";
 
@@ -36,7 +41,14 @@ export const Route = createFileRoute("/")({
 const WHATSAPP_URL = "https://wa.me/5524999313230";
 const PHONE_DISPLAY = "(24) 99931-3230";
 
-const BRANDS = ["HP", "Kyocera", "Brother", "Canon", "Epson", "Pantum"];
+const BRANDS: { name: string; src: string }[] = [
+  { name: "HP", src: hpLogo },
+  { name: "Kyocera", src: kyoceraLogo },
+  { name: "Brother", src: brotherLogo },
+  { name: "Canon", src: canonLogo },
+  { name: "Epson", src: epsonLogo },
+  { name: "Pantum", src: pantumLogo },
+];
 
 const STATS = [
   { value: "+30", label: "anos de mercado" },
@@ -53,12 +65,12 @@ const PAINS = [
 ];
 
 const BENEFITS = [
-  { icon: Printer, title: "Locação de Multifuncionais", desc: "Laser ou jato de tinta, mono ou colorido — escolha o ideal para sua operação." },
-  { icon: Wrench, title: "Manutenção Inclusa", desc: "Preventiva e corretiva sem custo extra. Equipamento sempre rodando." },
-  { icon: Headphones, title: "Suporte Especializado", desc: "Atendimento remoto ou presencial com técnicos experientes." },
-  { icon: Package, title: "Insumos Originais", desc: "Cartuchos e toner inclusos. Sem mais surpresas no orçamento." },
-  { icon: Wallet, title: "Custo Previsível", desc: "Franquias a partir de 1.500 cópias/mês. Você sabe exatamente quanto vai pagar." },
-  { icon: Truck, title: "Entrega Ágil", desc: "Atendimento em toda a região do Rio de Janeiro." },
+  { title: "Locação de Multifuncionais", desc: "Laser ou jato de tinta, mono ou colorido — escolha o ideal para sua operação." },
+  { title: "Manutenção Inclusa", desc: "Preventiva e corretiva sem custo extra. Equipamento sempre rodando." },
+  { title: "Suporte Especializado", desc: "Atendimento remoto ou presencial com técnicos experientes." },
+  { title: "Insumos Originais", desc: "Cartuchos e toner inclusos. Sem mais surpresas no orçamento." },
+  { title: "Custo Previsível", desc: "Franquias a partir de 1.500 cópias/mês. Você sabe exatamente quanto vai pagar." },
+  { title: "Entrega Ágil", desc: "Atendimento em toda a região do Rio de Janeiro." },
 ];
 
 const STEPS = [
@@ -160,7 +172,7 @@ function Header() {
           <a href="#faq" className="hover:text-foreground transition-colors">FAQ</a>
         </nav>
         <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
-          <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold">
+          <Button size="sm" className="btn-metallic font-semibold">
             Falar no WhatsApp
           </Button>
         </a>
@@ -200,13 +212,12 @@ function Hero() {
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
-              <Button size="lg" className="h-14 bg-primary px-7 text-base font-semibold text-primary-foreground shadow-[var(--shadow-glow)] hover:bg-primary/90">
-                <MessageCircle className="mr-2 h-5 w-5" />
+              <Button size="lg" className="btn-metallic h-14 px-7 text-base font-semibold">
                 Quero alugar agora via WhatsApp
               </Button>
             </a>
             <a href="#formulario">
-              <Button size="lg" variant="outline" className="h-14 border-border bg-transparent px-7 text-base hover:bg-secondary">
+              <Button size="lg" className="btn-metallic-outline h-14 px-7 text-base font-semibold">
                 Solicitar proposta
               </Button>
             </a>
@@ -215,11 +226,15 @@ function Hero() {
             <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Trabalhamos com as principais marcas
             </p>
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+            <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
               {BRANDS.map((b) => (
-                <span key={b} className="text-lg font-bold text-muted-foreground/80 transition-colors hover:text-foreground">
-                  {b}
-                </span>
+                <img
+                  key={b.name}
+                  src={b.src}
+                  alt={`Logo ${b.name}`}
+                  className="h-7 w-auto object-contain opacity-90 transition-opacity hover:opacity-100 md:h-8"
+                  loading="lazy"
+                />
               ))}
             </div>
           </div>
@@ -265,10 +280,10 @@ function Pain() {
         </h2>
         <p className="mt-4 text-muted-foreground">A maioria das empresas convive com esses problemas todos os meses:</p>
       </div>
-      <div className="mx-auto mt-12 grid max-w-4xl gap-4 sm:grid-cols-2">
+      <div className="mx-auto mt-12 grid max-w-6xl gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {PAINS.map((p) => (
-          <div key={p} className="flex items-start gap-3 rounded-xl border border-border bg-card p-5" data-reveal>
-            <XCircle className="mt-0.5 h-5 w-5 shrink-0 text-destructive" />
+          <div key={p} className="flex flex-col items-start gap-3 rounded-xl border border-border bg-card p-5 h-full" data-reveal>
+            <XCircle className="h-5 w-5 shrink-0 text-destructive" />
             <span className="text-sm md:text-base">{p}</span>
           </div>
         ))}
@@ -294,15 +309,12 @@ function Solution() {
           <p className="mt-4 text-muted-foreground">Tudo o que você precisa em um único contrato, com previsibilidade total.</p>
         </div>
         <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {BENEFITS.map(({ icon: Icon, title, desc }) => (
+          {BENEFITS.map(({ title, desc }) => (
             <div
               key={title}
               data-reveal
-              className="group relative overflow-hidden rounded-2xl border border-border bg-card p-7 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-[var(--shadow-glow)]"
+              className="relative overflow-hidden rounded-2xl border border-primary/40 bg-card p-7 shadow-[var(--shadow-glow)]"
             >
-              <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/15 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                <Icon className="h-6 w-6" />
-              </div>
               <h3 className="text-lg font-bold">{title}</h3>
               <p className="mt-2 text-sm text-muted-foreground">{desc}</p>
             </div>
@@ -320,24 +332,27 @@ function HowItWorks() {
         <h2 className="text-3xl font-extrabold sm:text-4xl md:text-5xl">Simples assim:</h2>
         <p className="mt-4 text-muted-foreground">Em poucos passos sua empresa está operando com a melhor solução de impressão do RJ.</p>
       </div>
-      <ol className="mx-auto mt-14 grid max-w-5xl gap-4 md:grid-cols-5">
+      <ol className="mx-auto mt-14 grid max-w-6xl gap-6 md:grid-cols-5">
         {STEPS.map((step, i) => (
           <li
             key={step}
             data-reveal
-            className="relative rounded-2xl border border-border bg-card p-6 text-center"
+            className="relative rounded-2xl border border-border bg-card p-6 pt-12 text-center"
           >
-            <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-primary font-display text-base font-extrabold text-primary-foreground">
+            <span
+              className="text-metallic-number absolute -top-6 left-1/2 -translate-x-1/2 font-display text-7xl font-extrabold leading-none"
+              aria-hidden
+            >
               {i + 1}
-            </div>
+            </span>
             <p className="text-sm">{step}</p>
           </li>
         ))}
       </ol>
       <div className="mt-10 flex justify-center" data-reveal>
         <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
-          <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">
-            Começar agora <ArrowRight className="ml-2 h-4 w-4" />
+          <Button size="lg" className="btn-metallic font-semibold">
+            Começar agora
           </Button>
         </a>
       </div>
@@ -359,10 +374,9 @@ function Services() {
             <div
               key={s}
               data-reveal
-              className="group flex items-center justify-between rounded-2xl border border-border bg-card p-6 transition-all hover:border-primary/50 hover:bg-card/80"
+              className="flex items-center justify-between rounded-2xl border border-border bg-card p-6"
             >
               <span className="text-base font-semibold">{s}</span>
-              <ArrowRight className="h-5 w-5 text-primary transition-transform group-hover:translate-x-1" />
             </div>
           ))}
         </div>
@@ -469,9 +483,8 @@ function LeadForm() {
             type="submit"
             size="lg"
             disabled={loading}
-            className="h-12 w-full bg-primary text-base font-semibold text-primary-foreground hover:bg-primary/90"
+            className="btn-metallic h-12 w-full text-base font-semibold"
           >
-            <MessageCircle className="mr-2 h-5 w-5" />
             {loading ? "Enviando..." : "Enviar e abrir WhatsApp"}
           </Button>
           <p className="text-center text-xs text-muted-foreground">
@@ -537,13 +550,12 @@ function FinalCTA() {
         </p>
         <div className="mt-10 flex flex-col items-center gap-4" data-reveal>
           <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
-            <Button size="lg" className="h-16 bg-primary px-10 text-lg font-bold text-primary-foreground shadow-[var(--shadow-glow)] hover:bg-primary/90">
-              <MessageCircle className="mr-2 h-6 w-6" />
+            <Button size="lg" className="btn-metallic h-16 px-10 text-lg font-bold">
               Falar no WhatsApp agora
             </Button>
           </a>
           <a href={`tel:+5524999313230`} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
-            <Phone className="h-4 w-4" /> {PHONE_DISPLAY}
+            {PHONE_DISPLAY}
           </a>
         </div>
       </div>
@@ -554,39 +566,13 @@ function FinalCTA() {
 function Footer() {
   return (
     <footer className="border-t border-border bg-background">
-      <div className="container mx-auto grid gap-10 px-4 py-14 md:grid-cols-4">
-        <div className="md:col-span-2">
-          <Logo size="lg" />
-          <p className="mt-4 max-w-sm text-sm text-muted-foreground">
-            Aluguel de impressoras e multifuncionais para empresas. Atendimento em todo o Estado do Rio de Janeiro há mais de 30 anos.
-          </p>
-          <div className="mt-5 flex gap-3">
-            <a href="https://www.instagram.com/inblacktoner/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="flex h-10 w-10 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary">
-              <Instagram className="h-4 w-4" />
-            </a>
-            <a href="https://www.facebook.com/inblacktonerbr" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="flex h-10 w-10 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary">
-              <Facebook className="h-4 w-4" />
-            </a>
-          </div>
-        </div>
-        <div>
-          <h4 className="text-sm font-semibold">Navegação</h4>
-          <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
-            <li><a href="#" className="hover:text-foreground">Home</a></li>
-            <li><a href="#solucao" className="hover:text-foreground">Sobre</a></li>
-            <li><a href="#servicos" className="hover:text-foreground">Serviços</a></li>
-            <li><a href={WHATSAPP_URL} className="hover:text-foreground">Contato</a></li>
-            <li><a href={WHATSAPP_URL} className="hover:text-foreground">Suporte</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4 className="text-sm font-semibold">Contato</h4>
-          <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
-            <li>{PHONE_DISPLAY}</li>
-            <li>Rio de Janeiro — RJ</li>
-            <li><a href={WHATSAPP_URL} className="text-primary hover:underline">WhatsApp</a></li>
-          </ul>
-        </div>
+      <div className="container mx-auto flex items-center justify-center gap-4 px-4 py-6">
+        <a href="https://www.instagram.com/inblacktoner/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary">
+          <Instagram className="h-4 w-4" />
+        </a>
+        <a href="https://www.facebook.com/inblacktonerbr" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary">
+          <Facebook className="h-4 w-4" />
+        </a>
       </div>
       <div className="border-t border-border py-5 text-center text-xs text-muted-foreground">
         IN BLACK TONER © 2026 — Todos os direitos reservados.
@@ -602,9 +588,9 @@ function FloatingWhatsApp() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Falar no WhatsApp"
-      className="animate-pulse-glow fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-[var(--shadow-glow)] transition-transform hover:scale-110"
+      className="btn-metallic animate-pulse-glow fixed bottom-6 right-6 z-50 flex h-12 items-center justify-center rounded-full px-5 transition-transform hover:scale-105"
     >
-      <MessageCircle className="h-7 w-7" />
+      <span className="font-bold text-sm">Fale no WhatsApp</span>
     </a>
   );
 }
