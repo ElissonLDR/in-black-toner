@@ -588,9 +588,9 @@ function FloatingWhatsApp() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Falar no WhatsApp"
-      className="btn-metallic animate-pulse-glow fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full !p-0 transition-transform hover:scale-110"
+      className="btn-metallic animate-pulse-glow fixed bottom-6 right-6 z-50 flex h-12 items-center justify-center rounded-full px-5 transition-transform hover:scale-105"
     >
-      <span className="font-bold text-sm">WhatsApp</span>
+      <span className="font-bold text-sm">Fale no WhatsApp</span>
     </a>
   );
 }
