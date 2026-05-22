@@ -1,12 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import heroPrinter from "@/assets/hero-printer.jpg";
+import brandLogo from "@/assets/Logo inblacktoner_black.png";
 import hpLogo from "@/assets/brands/hp.png";
 import kyoceraLogo from "@/assets/brands/kyocera.png";
 import brotherLogo from "@/assets/brands/brother.png";
 import canonLogo from "@/assets/brands/canon.png";
 import epsonLogo from "@/assets/brands/epson.png";
 import pantumLogo from "@/assets/brands/pantum.png";
+import benefitLocacao from "@/assets/servico-locacao.png";
+import benefitManutencao from "@/assets/servico-remanufatura.png";
+import benefitSuporte from "@/assets/servico-suporte-tecnico.png";
+import benefitInsumos from "@/assets/servico-cartuchos-originais.png";
+import benefitCusto from "@/assets/servico-impressao.png";
+import benefitEntrega from "@/assets/servico-entrega.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -64,13 +71,13 @@ const PAINS = [
   "Capital imobilizado em equipamento depreciando",
 ];
 
-const BENEFITS = [
-  { title: "Locação de Multifuncionais", desc: "Laser ou jato de tinta, mono ou colorido — escolha o ideal para sua operação." },
-  { title: "Manutenção Inclusa", desc: "Preventiva e corretiva sem custo extra. Equipamento sempre rodando." },
-  { title: "Suporte Especializado", desc: "Atendimento remoto ou presencial com técnicos experientes." },
-  { title: "Insumos Originais", desc: "Cartuchos e toner inclusos. Sem mais surpresas no orçamento." },
-  { title: "Custo Previsível", desc: "Franquias a partir de 1.500 cópias/mês. Você sabe exatamente quanto vai pagar." },
-  { title: "Entrega Ágil", desc: "Atendimento em toda a região do Rio de Janeiro." },
+const BENEFITS: { title: string; desc: string; image: string }[] = [
+  { title: "Locação de Multifuncionais", desc: "Laser ou jato de tinta, mono ou colorido — escolha o ideal para sua operação.", image: benefitLocacao },
+  { title: "Manutenção Inclusa", desc: "Preventiva e corretiva sem custo extra. Equipamento sempre rodando.", image: benefitManutencao },
+  { title: "Suporte Especializado", desc: "Atendimento remoto ou presencial com técnicos experientes.", image: benefitSuporte },
+  { title: "Insumos Originais", desc: "Cartuchos e toner inclusos. Sem mais surpresas no orçamento.", image: benefitInsumos },
+  { title: "Custo Previsível", desc: "Franquias a partir de 1.500 cópias/mês. Você sabe exatamente quanto vai pagar.", image: benefitCusto },
+  { title: "Entrega Ágil", desc: "Atendimento em toda a região do Rio de Janeiro.", image: benefitEntrega },
 ];
 
 const STEPS = [
@@ -162,8 +169,8 @@ function LandingPage() {
 
 function Header() {
   return (
-    <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-md">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
+    <header className="sticky top-3 z-40 px-4 md:top-4">
+      <div className="mx-auto flex h-14 max-w-[1280px] items-center justify-between rounded-2xl border border-border/60 bg-background/80 px-4 shadow-[var(--shadow-card)] backdrop-blur-md md:h-16 md:px-6">
         <Logo />
         <nav className="hidden gap-8 text-sm text-muted-foreground md:flex">
           <a href="#solucao" className="hover:text-foreground transition-colors">Soluções</a>
@@ -182,23 +189,27 @@ function Header() {
 }
 
 function Logo({ size = "md" }: { size?: "md" | "lg" }) {
-  const text = size === "lg" ? "text-2xl" : "text-lg";
+  const height = size === "lg" ? "h-12 md:h-14" : "h-9 md:h-10";
   return (
-    <div className="flex items-center gap-2">
-      <span className={`font-display ${text} font-extrabold tracking-tight`}>
-        In <span className="text-primary">Black</span> Toner
-      </span>
-    </div>
+    <a href="#" aria-label="In Black Toner" className="flex items-center">
+      <img
+        src={brandLogo}
+        alt="In Black Toner"
+        className={`${height} w-auto object-contain`}
+        loading="eager"
+        decoding="async"
+      />
+    </a>
   );
 }
 
 function Hero() {
   return (
     <section
-      className="relative overflow-hidden"
-      style={{ background: "var(--gradient-hero)" }}
+      className="relative mx-auto mt-6 overflow-hidden rounded-3xl border border-border/60"
+      style={{ width: "90vw", maxWidth: "1280px", background: "var(--gradient-hero)" }}
     >
-      <div className="container mx-auto grid gap-12 px-4 py-20 md:grid-cols-2 md:py-28 lg:py-32">
+      <div className="grid gap-12 px-6 py-16 md:grid-cols-2 md:px-12 md:py-20 lg:py-24">
         <div className="flex flex-col justify-center" data-reveal>
           <span className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-primary">
             <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
@@ -226,13 +237,13 @@ function Hero() {
             <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Trabalhamos com as principais marcas
             </p>
-            <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
+            <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 rounded-2xl border border-border/60 bg-white/95 px-6 py-5 shadow-sm">
               {BRANDS.map((b) => (
                 <img
                   key={b.name}
                   src={b.src}
                   alt={`Logo ${b.name}`}
-                  className="h-7 w-auto object-contain opacity-90 transition-opacity hover:opacity-100 md:h-8"
+                  className="h-7 w-auto object-contain opacity-95 transition-opacity hover:opacity-100 md:h-8"
                   loading="lazy"
                 />
               ))}
@@ -258,14 +269,26 @@ function Hero() {
 
 function Stats() {
   return (
-    <section className="border-y border-border bg-secondary/40">
-      <div className="container mx-auto grid grid-cols-2 gap-8 px-4 py-12 md:grid-cols-4">
-        {STATS.map((s) => (
-          <div key={s.label} className="text-center" data-reveal>
-            <div className="font-display text-3xl font-extrabold text-primary md:text-4xl">{s.value}</div>
-            <div className="mt-1 text-sm text-muted-foreground">{s.label}</div>
+    <section
+      className="relative overflow-hidden"
+      style={{ background: "var(--gradient-hero)" }}
+    >
+      <div className="container mx-auto px-4">
+        <div
+          data-reveal
+          className="mx-auto max-w-5xl rounded-3xl border border-border/70 bg-card/60 px-6 py-10 shadow-[var(--shadow-card)] backdrop-blur-sm md:px-12 md:py-12"
+        >
+          <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
+            {STATS.map((s) => (
+              <div key={s.label} className="text-center">
+                <div className="font-display text-3xl font-extrabold text-primary md:text-4xl">
+                  {s.value}
+                </div>
+                <div className="mt-1 text-sm text-muted-foreground">{s.label}</div>
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
       </div>
     </section>
   );
@@ -309,14 +332,29 @@ function Solution() {
           <p className="mt-4 text-muted-foreground">Tudo o que você precisa em um único contrato, com previsibilidade total.</p>
         </div>
         <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {BENEFITS.map(({ title, desc }) => (
+          {BENEFITS.map(({ title, desc, image }) => (
             <div
               key={title}
               data-reveal
-              className="relative overflow-hidden rounded-2xl border border-primary/40 bg-card p-7 shadow-[var(--shadow-glow)]"
+              className="group relative flex flex-col overflow-hidden rounded-2xl border border-primary/40 bg-card shadow-[var(--shadow-glow)]"
             >
-              <h3 className="text-lg font-bold">{title}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{desc}</p>
+              <div className="relative aspect-[16/10] overflow-hidden bg-secondary/60">
+                <img
+                  src={image}
+                  alt={title}
+                  loading="lazy"
+                  decoding="async"
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                <div
+                  className="pointer-events-none absolute inset-0 bg-gradient-to-t from-card via-card/30 to-transparent"
+                  aria-hidden
+                />
+              </div>
+              <div className="p-7">
+                <h3 className="text-lg font-bold">{title}</h3>
+                <p className="mt-2 text-sm text-muted-foreground">{desc}</p>
+              </div>
             </div>
           ))}
         </div>
@@ -588,9 +626,22 @@ function FloatingWhatsApp() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Falar no WhatsApp"
-      className="btn-metallic animate-pulse-glow fixed bottom-6 right-6 z-50 flex h-12 items-center justify-center rounded-full px-5 transition-transform hover:scale-105"
+      className="btn-metallic animate-pulse-glow fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full transition-transform hover:scale-105"
     >
-      <span className="font-bold text-sm">Fale no WhatsApp</span>
+      <WhatsAppIcon className="h-7 w-7" />
     </a>
+  );
+}
+
+function WhatsAppIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 32 32"
+      fill="currentColor"
+      aria-hidden="true"
+      className={className}
+    >
+      <path d="M19.11 17.205c-.372 0-1.088 1.39-1.518 1.39a.63.63 0 01-.315-.1c-.802-.402-1.504-.817-2.163-1.447-.545-.516-1.146-1.29-1.46-1.963a.426.426 0 01-.073-.215c0-.33.99-.945.99-1.49 0-.143-.73-2.09-.832-2.335-.143-.372-.214-.487-.6-.487-.187 0-.36-.043-.53-.043-.302 0-.53.115-.746.315-.688.645-1.032 1.318-1.06 2.264v.114c-.015.99.472 1.977 1.017 2.78 1.23 1.82 2.506 3.41 4.554 4.34.616.287 2.035 1.043 2.722 1.043.847 0 2.521-.515 2.722-1.39.029-.13.029-.244.029-.387 0-.703-1.475-1.243-1.79-1.39zM16.029 28.493c-2.392 0-4.7-.685-6.749-1.952l-4.829 1.547 1.578-4.715a12.486 12.486 0 01-2.235-7.155c0-6.954 5.643-12.6 12.6-12.6 3.366 0 6.531 1.31 8.91 3.693a12.486 12.486 0 013.69 8.907c0 6.957-5.658 12.6-12.615 12.6h-.35zm0-23.087c-5.79 0-10.5 4.71-10.5 10.5 0 2.314.738 4.523 2.142 6.385l-1.392 4.16 4.275-1.365a10.471 10.471 0 005.586 1.62h.305c5.79 0 10.5-4.71 10.5-10.5 0-2.806-1.092-5.443-3.077-7.428a10.45 10.45 0 00-7.42-3.077z" />
+    </svg>
   );
 }
