@@ -172,7 +172,7 @@ function Header() {
     <header className="sticky top-3 z-40 px-4 md:top-4">
       <div className="mx-auto flex h-14 max-w-[1280px] items-center justify-between rounded-2xl border border-border/60 bg-background/80 px-4 shadow-[var(--shadow-card)] backdrop-blur-md md:h-16 md:px-6">
         <Logo />
-        <nav className="hidden gap-8 text-sm text-muted-foreground md:flex">
+        <nav className="hidden gap-8 text-sm text-muted-foreground lg:flex">
           <a href="#solucao" className="hover:text-foreground transition-colors">Soluções</a>
           <a href="#como-funciona" className="hover:text-foreground transition-colors">Como funciona</a>
           <a href="#servicos" className="hover:text-foreground transition-colors">Serviços</a>
