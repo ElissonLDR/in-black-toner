@@ -172,7 +172,7 @@ function Header() {
     <header className="sticky top-3 z-40 px-4 md:top-4">
       <div className="mx-auto flex h-14 max-w-[1280px] items-center justify-between rounded-2xl border border-border/60 bg-background/80 px-4 shadow-[var(--shadow-card)] backdrop-blur-md md:h-16 md:px-6">
         <Logo />
-        <nav className="hidden gap-8 text-sm text-muted-foreground md:flex">
+        <nav className="hidden gap-8 text-sm text-muted-foreground lg:flex">
           <a href="#solucao" className="hover:text-foreground transition-colors">Soluções</a>
           <a href="#como-funciona" className="hover:text-foreground transition-colors">Como funciona</a>
           <a href="#servicos" className="hover:text-foreground transition-colors">Serviços</a>
@@ -209,19 +209,19 @@ function Hero() {
       className="relative mx-auto mt-6 overflow-hidden rounded-3xl border border-border/60"
       style={{ width: "90vw", maxWidth: "1280px", background: "var(--gradient-hero)" }}
     >
-      <div className="grid gap-12 px-6 py-16 md:grid-cols-2 md:px-12 md:py-20 lg:py-24">
-        <div className="flex flex-col justify-center" data-reveal>
-          <span className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-primary">
+      <div className="grid gap-12 px-6 py-16 md:px-12 md:py-20 lg:grid-cols-2 lg:py-24">
+        <div className="flex flex-col justify-center text-center lg:text-left" data-reveal>
+          <span className="mb-5 inline-flex w-fit items-center gap-2 self-center rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-primary lg:self-start">
             <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
             +30 anos no Rio de Janeiro
           </span>
           <h1 className="text-4xl font-extrabold leading-[1.05] sm:text-5xl lg:text-6xl">
             Alugue Impressoras para sua Empresa e <span className="text-primary">Esqueça os Problemas</span> com Impressão
           </h1>
-          <p className="mt-6 max-w-xl text-lg text-muted-foreground">
+          <p className="mt-6 max-w-xl text-lg text-muted-foreground mx-auto lg:mx-0">
             Manutenção preventiva, suporte técnico e insumos incluídos — tudo em um único contrato.
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-8 flex flex-wrap justify-center gap-3 lg:justify-start">
             <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
               <Button size="lg" className="btn-metallic h-14 px-7 text-base font-semibold">
                 Quero alugar agora via WhatsApp
