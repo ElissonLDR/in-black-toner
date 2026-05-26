@@ -14,6 +14,7 @@ import benefitSuporte from "@/assets/servico-suporte-tecnico.png";
 import benefitInsumos from "@/assets/servico-cartuchos-originais.png";
 import benefitCusto from "@/assets/servico-impressao.png";
 import benefitEntrega from "@/assets/servico-entrega.png";
+import bgLeadForm from "@/assets/bg-lead-form.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,11 +24,19 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import {
   CheckCircle2, XCircle, Star,
-  Instagram, Facebook,
+  Instagram, Facebook, Menu,
+  Quote, User,
 } from "lucide-react";
 import { z } from "zod";
 
@@ -57,11 +66,11 @@ const BRANDS: { name: string; src: string }[] = [
   { name: "Pantum", src: pantumLogo },
 ];
 
-const STATS = [
-  { value: "+30", label: "anos de mercado" },
-  { value: "+5.000", label: "clientes satisfeitos" },
-  { value: "+500 mil", label: "cópias realizadas" },
-  { value: "+150", label: "empresas no RJ" },
+const STATS: { to: number; prefix?: string; suffix?: string; label: string }[] = [
+  { to: 30, prefix: "+", label: "anos de mercado" },
+  { to: 5000, prefix: "+", label: "clientes satisfeitos" },
+  { to: 500, prefix: "+", suffix: "mil", label: "cópias realizadas" },
+  { to: 150, prefix: "+", label: "empresas no RJ" },
 ];
 
 const PAINS = [
@@ -167,6 +176,13 @@ function LandingPage() {
   );
 }
 
+const NAV_LINKS: { href: string; targetId: string; label: string }[] = [
+  { href: "#solucao", targetId: "solucao", label: "Soluções" },
+  { href: "#como-funciona", targetId: "como-funciona", label: "Como funciona" },
+  { href: "#servicos", targetId: "servicos", label: "Serviços" },
+  { href: "#faq", targetId: "faq", label: "FAQ" },
+];
+
 function smoothScrollTo(e: React.MouseEvent<HTMLAnchorElement>, targetId: string) {
   e.preventDefault();
   const el = document.getElementById(targetId);
@@ -181,18 +197,80 @@ function Header() {
       <div className="mx-auto flex h-14 max-w-[1280px] items-center justify-between rounded-2xl border border-border/60 bg-background/80 px-4 shadow-[var(--shadow-card)] backdrop-blur-md md:h-16 md:px-6">
         <Logo />
         <nav className="hidden gap-8 text-sm text-muted-foreground lg:flex">
-          <a href="#solucao" onClick={(e) => smoothScrollTo(e, "solucao")} className="hover:text-foreground transition-colors">Soluções</a>
-          <a href="#como-funciona" onClick={(e) => smoothScrollTo(e, "como-funciona")} className="hover:text-foreground transition-colors">Como funciona</a>
-          <a href="#servicos" onClick={(e) => smoothScrollTo(e, "servicos")} className="hover:text-foreground transition-colors">Serviços</a>
-          <a href="#faq" onClick={(e) => smoothScrollTo(e, "faq")} className="hover:text-foreground transition-colors">FAQ</a>
+          {NAV_LINKS.map((l) => (
+            <a
+              key={l.href}
+              href={l.href}
+              onClick={(e) => smoothScrollTo(e, l.targetId)}
+              className="hover:text-foreground transition-colors"
+            >
+              {l.label}
+            </a>
+          ))}
         </nav>
-        <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
+        <a
+          href={WHATSAPP_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hidden lg:inline-flex"
+        >
           <Button size="sm" className="btn-metallic font-semibold">
             Falar no WhatsApp
           </Button>
         </a>
+        <MobileMenu />
       </div>
     </header>
+  );
+}
+
+function MobileMenu() {
+  return (
+    <Sheet>
+      <SheetTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="Abrir menu"
+          className="lg:hidden rounded-full text-foreground hover:bg-secondary/60"
+        >
+          <Menu className="h-6 w-6" />
+        </Button>
+      </SheetTrigger>
+      <SheetContent
+        side="right"
+        className="w-[85vw] max-w-sm border-l border-border bg-background p-6"
+      >
+        <SheetTitle className="sr-only">Menu</SheetTitle>
+        <div className="mt-10 flex h-full flex-col">
+          <nav className="flex flex-col gap-1 text-base">
+            {NAV_LINKS.map((l) => (
+              <SheetClose asChild key={l.href}>
+                <a
+                  href={l.href}
+                  onClick={(e) => smoothScrollTo(e, l.targetId)}
+                  className="rounded-md px-3 py-3 font-medium transition-colors hover:bg-secondary/60"
+                >
+                  {l.label}
+                </a>
+              </SheetClose>
+            ))}
+          </nav>
+          <SheetClose asChild>
+            <a
+              href={WHATSAPP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-8 block"
+            >
+              <Button className="btn-metallic h-12 w-full font-semibold">
+                Falar no WhatsApp
+              </Button>
+            </a>
+          </SheetClose>
+        </div>
+      </SheetContent>
+    </Sheet>
   );
 }
 
@@ -215,7 +293,7 @@ function Hero() {
   return (
     <section className="container mx-auto mt-6 px-4">
       <div
-        className="relative overflow-hidden rounded-3xl border border-border/60"
+        className="relative overflow-hidden rounded-3xl"
         style={{ background: "var(--gradient-hero)" }}
       >
       <div className="grid gap-12 py-16 md:py-20 lg:grid-cols-2 lg:py-24">
@@ -236,27 +314,11 @@ function Hero() {
                 Quero alugar agora via WhatsApp
               </Button>
             </a>
-            <a href="#formulario">
+            <a href="#formulario" onClick={(e) => smoothScrollTo(e, "formulario")}>
               <Button size="lg" className="btn-metallic-outline h-14 px-7 text-base font-semibold">
                 Solicitar proposta
               </Button>
             </a>
-          </div>
-          <div className="mt-10">
-            <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Trabalhamos com as principais marcas
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 rounded-2xl border border-border/60 bg-white/95 px-6 py-5 shadow-sm">
-              {BRANDS.map((b) => (
-                <img
-                  key={b.name}
-                  src={b.src}
-                  alt={`Logo ${b.name}`}
-                  className="h-7 w-auto object-contain opacity-95 transition-opacity hover:opacity-100 md:h-8"
-                  loading="lazy"
-                />
-              ))}
-            </div>
           </div>
         </div>
         <div className="relative" data-reveal>
@@ -270,6 +332,22 @@ function Hero() {
               className="h-full w-full object-cover"
             />
           </div>
+        </div>
+      </div>
+      <div className="w-full px-6 pb-10 md:px-12 md:pb-12" data-reveal>
+        <p className="mb-4 text-center text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          Trabalhamos com as principais marcas
+        </p>
+        <div className="mx-auto flex w-fit max-w-full flex-wrap items-center justify-center gap-x-8 gap-y-4 rounded-full bg-[#cacaca] px-8 py-5">
+          {BRANDS.map((b) => (
+            <img
+              key={b.name}
+              src={b.src}
+              alt={`Logo ${b.name}`}
+              className="h-7 w-auto object-contain opacity-95 transition-opacity hover:opacity-100 md:h-8"
+              loading="lazy"
+            />
+          ))}
         </div>
       </div>
       </div>
@@ -286,21 +364,84 @@ function Stats() {
       <div className="container mx-auto px-4">
         <div
           data-reveal
-          className="mx-auto max-w-5xl rounded-3xl border border-border/70 bg-card/60 px-6 py-10 shadow-[var(--shadow-card)] backdrop-blur-sm md:px-12 md:py-12"
+          className="mx-auto max-w-[1280px] rounded-3xl border border-border/70 bg-card/60 px-6 py-10 shadow-[var(--shadow-card)] backdrop-blur-sm md:px-12 md:py-12"
         >
           <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
             {STATS.map((s) => (
               <div key={s.label} className="text-center">
-                <div className="font-display text-3xl font-extrabold text-primary md:text-4xl">
-                  {s.value}
+                <div className="font-display text-5xl font-extrabold leading-none text-primary md:text-6xl lg:text-7xl">
+                  <CountUp to={s.to} prefix={s.prefix} suffix={s.suffix} />
                 </div>
-                <div className="mt-1 text-sm text-muted-foreground">{s.label}</div>
+                <div className="mt-3 text-sm text-muted-foreground">{s.label}</div>
               </div>
             ))}
           </div>
         </div>
       </div>
     </section>
+  );
+}
+
+function CountUp({
+  to,
+  prefix = "",
+  suffix = "",
+  durationMs = 1800,
+}: {
+  to: number;
+  prefix?: string;
+  suffix?: string;
+  durationMs?: number;
+}) {
+  const [value, setValue] = useState(0);
+  const ref = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduced) {
+      setValue(to);
+      return;
+    }
+
+    let rafId = 0;
+    let started = false;
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting || started) return;
+        started = true;
+        const startTime = performance.now();
+        const tick = (now: number) => {
+          const progress = Math.min((now - startTime) / durationMs, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          setValue(Math.round(to * eased));
+          if (progress < 1) rafId = requestAnimationFrame(tick);
+        };
+        rafId = requestAnimationFrame(tick);
+      },
+      { threshold: 0.3 }
+    );
+    io.observe(el);
+
+    return () => {
+      io.disconnect();
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, [to, durationMs]);
+
+  return (
+    <span ref={ref}>
+      {prefix}
+      {value.toLocaleString("pt-BR")}
+      {suffix && (
+        <span className="ml-2 text-2xl md:text-3xl lg:text-4xl">
+          {suffix}
+        </span>
+      )}
+    </span>
   );
 }
 
@@ -315,7 +456,11 @@ function Pain() {
       </div>
       <div className="mx-auto mt-12 grid max-w-6xl gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {PAINS.map((p) => (
-          <div key={p} className="flex flex-col items-start gap-3 rounded-xl border border-border bg-card p-5 h-full" data-reveal>
+          <div
+            key={p}
+            className="flex h-full flex-col items-center gap-3 rounded-xl border border-border bg-card p-5 text-center sm:items-start sm:text-left"
+            data-reveal
+          >
             <XCircle className="h-5 w-5 shrink-0 text-destructive" />
             <span className="text-sm md:text-base">{p}</span>
           </div>
@@ -374,26 +519,52 @@ function Solution() {
 }
 
 function HowItWorks() {
+  const listRef = useRef<HTMLOListElement>(null);
+
+  useEffect(() => {
+    const list = listRef.current;
+    if (!list) return;
+    const items = Array.from(list.querySelectorAll<HTMLLIElement>("li[data-stagger]"));
+    items.forEach((item) => {
+      item.style.opacity = "0";
+    });
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          items.forEach((item) => item.classList.add("animate-fade-up"));
+          io.disconnect();
+        }
+      },
+      { threshold: 0.2 }
+    );
+    io.observe(list);
+    return () => io.disconnect();
+  }, []);
+
   return (
     <section id="como-funciona" className="container mx-auto px-4 py-20 md:py-28">
       <div className="mx-auto max-w-3xl text-center" data-reveal>
         <h2 className="text-3xl font-extrabold sm:text-4xl md:text-5xl">Simples assim:</h2>
         <p className="mt-4 text-muted-foreground">Em poucos passos sua empresa está operando com a melhor solução de impressão do RJ.</p>
       </div>
-      <ol className="mx-auto mt-14 grid max-w-6xl gap-6 md:grid-cols-5">
+      <ol
+        ref={listRef}
+        className="mx-auto mt-14 grid max-w-6xl gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-5"
+      >
         {STEPS.map((step, i) => (
           <li
             key={step}
-            data-reveal
-            className="relative rounded-2xl border border-border bg-card p-6 pt-12 text-center"
+            data-stagger
+            style={{ animationDelay: `${i * 0.15}s` }}
+            className="flex flex-col items-center rounded-2xl border border-border bg-card p-6 text-center"
           >
             <span
-              className="text-metallic-number absolute -top-6 left-1/2 -translate-x-1/2 font-display text-7xl font-extrabold leading-none"
+              className="text-metallic-number font-display text-6xl font-extrabold leading-none"
               aria-hidden
             >
               {i + 1}
             </span>
-            <p className="text-sm">{step}</p>
+            <p className="mt-4 text-sm">{step}</p>
           </li>
         ))}
       </ol>
@@ -447,8 +618,14 @@ function Testimonials() {
           <figure
             key={t.name}
             data-reveal
-            className="flex h-full flex-col rounded-2xl border border-border bg-card p-7"
+            className="relative flex h-full flex-col rounded-2xl border border-border bg-card p-7"
           >
+            <div
+              aria-hidden
+              className="absolute -right-7 -top-7 flex h-14 w-14 items-center justify-center rounded-full border border-border bg-background shadow-[var(--shadow-card)]"
+            >
+              <Quote className="h-7 w-7 fill-primary text-primary" />
+            </div>
             <div className="flex gap-1 text-primary">
               {Array.from({ length: 5 }).map((_, i) => (
                 <Star key={i} className="h-4 w-4 fill-current" />
@@ -457,9 +634,17 @@ function Testimonials() {
             <blockquote className="mt-4 flex-1 text-sm text-muted-foreground">
               "{t.text}"
             </blockquote>
-            <figcaption className="mt-6 border-t border-border pt-4">
-              <div className="font-semibold">{t.name}</div>
-              <div className="text-xs text-muted-foreground">{t.role} · {t.company}</div>
+            <figcaption className="mt-6 flex items-center gap-3 border-t border-border pt-4">
+              <div
+                aria-hidden
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary/70 text-muted-foreground"
+              >
+                <User className="h-5 w-5" />
+              </div>
+              <div>
+                <div className="font-semibold">{t.name}</div>
+                <div className="text-xs text-muted-foreground">{t.role} · {t.company}</div>
+              </div>
             </figcaption>
           </figure>
         ))}
@@ -497,49 +682,58 @@ function LeadForm() {
   };
 
   return (
-    <section id="formulario" className="bg-secondary/30 py-20 md:py-28">
-      <div className="container mx-auto grid gap-12 px-4 lg:grid-cols-2 lg:items-center">
-        <div data-reveal>
-          <h2 className="text-3xl font-extrabold sm:text-4xl md:text-5xl">
-            Receba uma <span className="text-primary">proposta personalizada</span>
-          </h2>
-          <p className="mt-4 max-w-md text-muted-foreground">
-            Preencha os campos e fale com um especialista. Respondemos em poucos minutos no horário comercial.
-          </p>
-          <ul className="mt-8 space-y-3 text-sm">
-            {["Atendimento em todo o RJ", "Resposta em até 1 hora útil", "Sem compromisso"].map((i) => (
-              <li key={i} className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-primary" /> {i}
-              </li>
-            ))}
-          </ul>
-        </div>
-        <form
-          onSubmit={onSubmit}
-          data-reveal
-          className="space-y-4 rounded-3xl border border-border bg-card p-6 shadow-[var(--shadow-card)] md:p-8"
-        >
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field name="nome" label="Nome" placeholder="Seu nome completo" />
-            <Field name="numero" label="Telefone / WhatsApp" placeholder="(00) 00000-0000" />
+    <section id="formulario" className="container mx-auto px-4 py-20 md:py-28">
+      <div
+        className="relative mx-auto max-w-[1280px] overflow-hidden rounded-3xl shadow-[var(--shadow-card)]"
+        style={{
+          backgroundImage: `url(${bgLeadForm})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div className="relative grid gap-12 p-8 md:p-12 lg:grid-cols-2 lg:items-center lg:p-16">
+          <div data-reveal className="text-center lg:text-left">
+            <h2 className="text-3xl font-extrabold sm:text-4xl md:text-5xl">
+              Receba uma <span className="text-primary">proposta personalizada</span>
+            </h2>
+            <p className="mx-auto mt-4 max-w-md text-muted-foreground lg:mx-0">
+              Preencha os campos e fale com um especialista. Respondemos em poucos minutos no horário comercial.
+            </p>
+            <ul className="mt-8 space-y-3 text-sm">
+              {["Atendimento em todo o RJ", "Resposta em até 1 hora útil", "Sem compromisso"].map((i) => (
+                <li key={i} className="flex items-center justify-center gap-2 lg:justify-start">
+                  <CheckCircle2 className="h-4 w-4 text-primary" /> {i}
+                </li>
+              ))}
+            </ul>
           </div>
-          <Field name="email" label="E-mail" type="email" placeholder="voce@empresa.com" />
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field name="cidade" label="Cidade" placeholder="Ex: Rio de Janeiro" />
-            <Field name="servico" label="Qual serviço busca" placeholder="Ex: Aluguel multifuncional" />
-          </div>
-          <Button
-            type="submit"
-            size="lg"
-            disabled={loading}
-            className="btn-metallic h-12 w-full text-base font-semibold"
+          <form
+            onSubmit={onSubmit}
+            data-reveal
+            className="space-y-4 rounded-3xl border border-border/60 bg-card/85 p-6 shadow-[var(--shadow-card)] backdrop-blur-md md:p-8"
           >
-            {loading ? "Enviando..." : "Enviar e abrir WhatsApp"}
-          </Button>
-          <p className="text-center text-xs text-muted-foreground">
-            Ao enviar, você concorda em receber contato comercial da In Black Toner.
-          </p>
-        </form>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field name="nome" label="Nome" placeholder="Seu nome completo" />
+              <Field name="numero" label="Telefone / WhatsApp" placeholder="(00) 00000-0000" />
+            </div>
+            <Field name="email" label="E-mail" type="email" placeholder="voce@empresa.com" />
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field name="cidade" label="Cidade" placeholder="Ex: Rio de Janeiro" />
+              <Field name="servico" label="Qual serviço busca" placeholder="Ex: Aluguel multifuncional" />
+            </div>
+            <Button
+              type="submit"
+              size="lg"
+              disabled={loading}
+              className="btn-metallic h-12 w-full text-base font-semibold"
+            >
+              {loading ? "Enviando..." : "Enviar e abrir WhatsApp"}
+            </Button>
+            <p className="text-center text-xs text-muted-foreground">
+              Ao enviar, você concorda em receber contato comercial da In Black Toner.
+            </p>
+          </form>
+        </div>
       </div>
     </section>
   );
@@ -589,7 +783,7 @@ function FAQ() {
 
 function FinalCTA() {
   return (
-    <section className="relative overflow-hidden border-y border-border" style={{ background: "var(--gradient-hero)" }}>
+    <section className="relative overflow-hidden" style={{ background: "var(--gradient-hero)" }}>
       <div className="container mx-auto px-4 py-20 text-center md:py-28">
         <h2 className="mx-auto max-w-3xl text-4xl font-extrabold sm:text-5xl md:text-6xl" data-reveal>
           Sua empresa merece <span className="text-primary">imprimir sem estresse</span>
@@ -614,16 +808,16 @@ function FinalCTA() {
 
 function Footer() {
   return (
-    <footer className="border-t border-border bg-background">
+    <footer className="bg-background">
       <div className="container mx-auto flex items-center justify-center gap-4 px-4 py-6">
-        <a href="https://www.instagram.com/inblacktoner/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary">
+        <a href="https://www.instagram.com/inblacktoner/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary/60 text-muted-foreground transition-colors hover:bg-primary/15 hover:text-primary">
           <Instagram className="h-4 w-4" />
         </a>
-        <a href="https://www.facebook.com/inblacktonerbr" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary">
+        <a href="https://www.facebook.com/inblacktonerbr" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary/60 text-muted-foreground transition-colors hover:bg-primary/15 hover:text-primary">
           <Facebook className="h-4 w-4" />
         </a>
       </div>
-      <div className="border-t border-border py-5 text-center text-xs text-muted-foreground">
+      <div className="py-5 text-center text-xs text-muted-foreground">
         IN BLACK TONER © 2026 — Todos os direitos reservados.
       </div>
     </footer>
