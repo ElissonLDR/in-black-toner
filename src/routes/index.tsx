@@ -213,10 +213,11 @@ function Logo({ size = "md" }: { size?: "md" | "lg" }) {
 
 function Hero() {
   return (
-    <section
-      className="relative mx-auto mt-6 overflow-hidden rounded-3xl border border-border/60"
-      style={{ width: "90vw", maxWidth: "1280px", background: "var(--gradient-hero)" }}
-    >
+    <section className="container mx-auto mt-6 px-4">
+      <div
+        className="relative overflow-hidden rounded-3xl border border-border/60"
+        style={{ background: "var(--gradient-hero)" }}
+      >
       <div className="grid gap-12 px-6 py-16 md:px-12 md:py-20 lg:grid-cols-2 lg:py-24">
         <div className="flex flex-col justify-center text-center lg:text-left" data-reveal>
           <span className="mb-5 inline-flex w-fit items-center gap-2 self-center rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-primary lg:self-start">
@@ -270,6 +271,7 @@ function Hero() {
             />
           </div>
         </div>
+      </div>
       </div>
     </section>
   );
