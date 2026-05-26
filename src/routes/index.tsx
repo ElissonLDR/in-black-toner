@@ -218,7 +218,7 @@ function Hero() {
         className="relative overflow-hidden rounded-3xl border border-border/60"
         style={{ background: "var(--gradient-hero)" }}
       >
-      <div className="grid gap-12 px-6 py-16 md:px-12 md:py-20 lg:grid-cols-2 lg:py-24">
+      <div className="grid gap-12 py-16 md:py-20 lg:grid-cols-2 lg:py-24">
         <div className="flex flex-col justify-center text-center lg:text-left" data-reveal>
           <span className="mb-5 inline-flex w-fit items-center gap-2 self-center rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-primary lg:self-start">
             <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
