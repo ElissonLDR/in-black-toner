@@ -167,16 +167,24 @@ function LandingPage() {
   );
 }
 
+function smoothScrollTo(e: React.MouseEvent<HTMLAnchorElement>, targetId: string) {
+  e.preventDefault();
+  const el = document.getElementById(targetId);
+  if (el) {
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+}
+
 function Header() {
   return (
     <header className="sticky top-3 z-40 px-4 md:top-4">
       <div className="mx-auto flex h-14 max-w-[1280px] items-center justify-between rounded-2xl border border-border/60 bg-background/80 px-4 shadow-[var(--shadow-card)] backdrop-blur-md md:h-16 md:px-6">
         <Logo />
         <nav className="hidden gap-8 text-sm text-muted-foreground lg:flex">
-          <a href="#solucao" className="hover:text-foreground transition-colors">Soluções</a>
-          <a href="#como-funciona" className="hover:text-foreground transition-colors">Como funciona</a>
-          <a href="#servicos" className="hover:text-foreground transition-colors">Serviços</a>
-          <a href="#faq" className="hover:text-foreground transition-colors">FAQ</a>
+          <a href="#solucao" onClick={(e) => smoothScrollTo(e, "solucao")} className="hover:text-foreground transition-colors">Soluções</a>
+          <a href="#como-funciona" onClick={(e) => smoothScrollTo(e, "como-funciona")} className="hover:text-foreground transition-colors">Como funciona</a>
+          <a href="#servicos" onClick={(e) => smoothScrollTo(e, "servicos")} className="hover:text-foreground transition-colors">Serviços</a>
+          <a href="#faq" onClick={(e) => smoothScrollTo(e, "faq")} className="hover:text-foreground transition-colors">FAQ</a>
         </nav>
         <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
           <Button size="sm" className="btn-metallic font-semibold">
