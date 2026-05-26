@@ -82,8 +82,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:site", content: "@Lovable" },
       { name: "twitter:title", content: "In Black Toner — Aluguel de Impressoras no RJ" },
       { name: "twitter:description", content: "Aluguel de impressoras multifuncionais no Rio de Janeiro com manutenção, suporte técnico e insumos inclusos. +30 anos de mercado e +150 empresas atendidas." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/2cacf90f-5de6-4483-960b-a2c558f416e1/id-preview-a468cf19--c4ac3399-753f-41c3-8b3e-372c6534f6d0.lovable.app-1779301193303.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/2cacf90f-5de6-4483-960b-a2c558f416e1/id-preview-a468cf19--c4ac3399-753f-41c3-8b3e-372c6534f6d0.lovable.app-1779301193303.png" },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/f87f9509-093f-4eec-9bd7-327d661bf6ef" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/f87f9509-093f-4eec-9bd7-327d661bf6ef" },
     ],
     links: [
       {
