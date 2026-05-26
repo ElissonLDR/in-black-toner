@@ -422,8 +422,9 @@ function Services() {
             <div
               key={s}
               data-reveal
-              className="flex items-center justify-between rounded-2xl border border-border bg-card p-6"
+              className="flex items-center gap-3 rounded-2xl border border-border bg-card p-6"
             >
+              <CheckCircle2 className="h-5 w-5 shrink-0 text-primary" />
               <span className="text-base font-semibold">{s}</span>
             </div>
           ))}
