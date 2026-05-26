@@ -75,7 +75,7 @@ const BENEFITS: { title: string; desc: string; image: string }[] = [
   { title: "Locação de Multifuncionais", desc: "Laser ou jato de tinta, mono ou colorido — escolha o ideal para sua operação.", image: benefitLocacao },
   { title: "Manutenção Inclusa", desc: "Preventiva e corretiva sem custo extra. Equipamento sempre rodando.", image: benefitManutencao },
   { title: "Suporte Especializado", desc: "Atendimento remoto ou presencial com técnicos experientes.", image: benefitSuporte },
-  { title: "Insumos Originais", desc: "Cartuchos e toner inclusos. Sem mais surpresas no orçamento.", image: benefitInsumos },
+  { title: "Linha completa de toners e cartuchos", desc: "Cartuchos e toner inclusos. Sem mais surpresas no orçamento.", image: benefitInsumos },
   { title: "Custo Previsível", desc: "Franquias a partir de 1.500 cópias/mês. Você sabe exatamente quanto vai pagar.", image: benefitCusto },
   { title: "Entrega Ágil", desc: "Atendimento em toda a região do Rio de Janeiro.", image: benefitEntrega },
 ];
@@ -84,7 +84,7 @@ const STEPS = [
   "Entre em contato pelo WhatsApp",
   "Avaliamos a demanda de impressão da sua empresa",
   "Indicamos o equipamento ideal",
-  "Instalamos e configuramos sem custo",
+  "Suporte especializado na instalação e configuração",
   "Suporte contínuo durante todo o contrato",
 ];
 
