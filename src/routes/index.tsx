@@ -280,6 +280,7 @@ function MobileMenu() {
               href={WHATSAPP_URL}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={trackLeadConversion}
               className="mt-8 block"
             >
               <Button className="btn-metallic h-12 w-full font-semibold">
