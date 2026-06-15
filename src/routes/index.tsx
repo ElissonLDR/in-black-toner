@@ -57,6 +57,24 @@ export const Route = createFileRoute("/")({
 const WHATSAPP_URL = "https://wa.me/5524999313230";
 const PHONE_DISPLAY = "(24) 99931-3230";
 
+const trackLeadConversion = () => {
+  if (typeof window === "undefined") return;
+  const w = window as unknown as {
+    gtag?: (...args: unknown[]) => void;
+    fbq?: (...args: unknown[]) => void;
+    dataLayer?: unknown[];
+  };
+  try {
+    w.gtag?.("event", "conversion", {
+      send_to: "AW-780139321/HlDtCM6Dt78cELn2__MC",
+    });
+    w.fbq?.("track", "Lead");
+    w.dataLayer?.push({ event: "lead_whatsapp" });
+  } catch {
+    // noop
+  }
+};
+
 const BRANDS: { name: string; src: string }[] = [
   { name: "HP", src: hpLogo },
   { name: "Kyocera", src: kyoceraLogo },
