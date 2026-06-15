@@ -57,6 +57,24 @@ export const Route = createFileRoute("/")({
 const WHATSAPP_URL = "https://wa.me/5524999313230";
 const PHONE_DISPLAY = "(24) 99931-3230";
 
+const trackLeadConversion = () => {
+  if (typeof window === "undefined") return;
+  const w = window as unknown as {
+    gtag?: (...args: unknown[]) => void;
+    fbq?: (...args: unknown[]) => void;
+    dataLayer?: unknown[];
+  };
+  try {
+    w.gtag?.("event", "conversion", {
+      send_to: "AW-780139321/HlDtCM6Dt78cELn2__MC",
+    });
+    w.fbq?.("track", "Lead");
+    w.dataLayer?.push({ event: "lead_whatsapp" });
+  } catch {
+    // noop
+  }
+};
+
 const BRANDS: { name: string; src: string }[] = [
   { name: "HP", src: hpLogo },
   { name: "Kyocera", src: kyoceraLogo },
@@ -212,6 +230,7 @@ function Header() {
           href={WHATSAPP_URL}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={trackLeadConversion}
           className="hidden lg:inline-flex"
         >
           <Button size="sm" className="btn-metallic font-semibold">
@@ -261,6 +280,7 @@ function MobileMenu() {
               href={WHATSAPP_URL}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={trackLeadConversion}
               className="mt-8 block"
             >
               <Button className="btn-metallic h-12 w-full font-semibold">
@@ -309,7 +329,7 @@ function Hero() {
             Manutenção preventiva, suporte técnico e insumos incluídos — tudo em um único contrato.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3 lg:justify-start">
-            <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
+            <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" onClick={trackLeadConversion}>
               <Button size="lg" className="btn-metallic h-14 px-7 text-base font-semibold">
                 Quero alugar agora via WhatsApp
               </Button>
@@ -569,7 +589,7 @@ function HowItWorks() {
         ))}
       </ol>
       <div className="mt-10 flex justify-center" data-reveal>
-        <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
+        <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" onClick={trackLeadConversion}>
           <Button size="lg" className="btn-metallic font-semibold">
             Começar agora
           </Button>
@@ -674,6 +694,7 @@ function LeadForm() {
     const { nome, numero, email, cidade, servico } = parsed.data;
     const msg = `Olá! Meu nome é ${nome}.%0ATelefone: ${numero}%0AE-mail: ${email}%0ACidade: ${cidade}%0AServiço: ${servico}%0AGostaria de uma proposta.`;
     setTimeout(() => {
+      trackLeadConversion();
       window.open(`${WHATSAPP_URL}?text=${msg}`, "_blank", "noopener,noreferrer");
       toast.success("Redirecionando para o WhatsApp...");
       setLoading(false);
@@ -792,7 +813,7 @@ function FinalCTA() {
           Fale agora com um especialista e receba uma proposta personalizada.
         </p>
         <div className="mt-10 flex flex-col items-center gap-4" data-reveal>
-          <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
+          <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" onClick={trackLeadConversion}>
             <Button size="lg" className="btn-metallic h-16 px-10 text-lg font-bold">
               Falar no WhatsApp agora
             </Button>
@@ -830,6 +851,7 @@ function FloatingWhatsApp() {
       href={WHATSAPP_URL}
       target="_blank"
       rel="noopener noreferrer"
+      onClick={trackLeadConversion}
       aria-label="Falar no WhatsApp"
       className="btn-metallic animate-pulse-glow fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full transition-transform hover:scale-105"
     >
