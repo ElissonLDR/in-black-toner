@@ -694,6 +694,7 @@ function LeadForm() {
     const { nome, numero, email, cidade, servico } = parsed.data;
     const msg = `Olá! Meu nome é ${nome}.%0ATelefone: ${numero}%0AE-mail: ${email}%0ACidade: ${cidade}%0AServiço: ${servico}%0AGostaria de uma proposta.`;
     setTimeout(() => {
+      trackLeadConversion();
       window.open(`${WHATSAPP_URL}?text=${msg}`, "_blank", "noopener,noreferrer");
       toast.success("Redirecionando para o WhatsApp...");
       setLoading(false);
