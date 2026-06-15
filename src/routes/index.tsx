@@ -230,6 +230,7 @@ function Header() {
           href={WHATSAPP_URL}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={trackLeadConversion}
           className="hidden lg:inline-flex"
         >
           <Button size="sm" className="btn-metallic font-semibold">
