@@ -589,7 +589,7 @@ function HowItWorks() {
         ))}
       </ol>
       <div className="mt-10 flex justify-center" data-reveal>
-        <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
+        <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" onClick={trackLeadConversion}>
           <Button size="lg" className="btn-metallic font-semibold">
             Começar agora
           </Button>
