@@ -329,7 +329,7 @@ function Hero() {
             Manutenção preventiva, suporte técnico e insumos incluídos — tudo em um único contrato.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3 lg:justify-start">
-            <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
+            <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" onClick={trackLeadConversion}>
               <Button size="lg" className="btn-metallic h-14 px-7 text-base font-semibold">
                 Quero alugar agora via WhatsApp
               </Button>
