@@ -932,3 +932,97 @@ function WhatsAppIcon({ className }: { className?: string }) {
     </svg>
   );
 }
+
+// ---------- Lead Modal (abre a partir de qualquer botão de WhatsApp) ----------
+const modalSchema = z.object({
+  nome: z.string().trim().min(2, "Informe seu nome").max(100),
+  telefone: z.string().trim().min(8, "Informe um telefone válido").max(20),
+  servico: z.string().trim().min(2, "Selecione um serviço").max(120),
+});
+
+function LeadModal() {
+  const { open, origin } = useLeadModalState();
+  const [loading, setLoading] = useState(false);
+
+  const close = () => leadStore.set({ open: false, origin: "" });
+
+  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    const parsed = modalSchema.safeParse({
+      nome: fd.get("nome"),
+      telefone: fd.get("telefone"),
+      servico: fd.get("servico"),
+    });
+    if (!parsed.success) {
+      toast.error(parsed.error.issues[0]?.message ?? "Verifique os campos");
+      return;
+    }
+    setLoading(true);
+    const { nome, telefone, servico } = parsed.data;
+    void sendLeadToWebhook({
+      origin: `modal:${origin || "unknown"}`,
+      nome,
+      telefone,
+      servico,
+    });
+    const msg = `Olá! Meu nome é ${nome}.%0ATelefone: ${telefone}%0AServiço: ${servico}%0AGostaria de uma proposta.`;
+    setTimeout(() => {
+      trackLeadConversion();
+      window.open(`${WHATSAPP_URL}?text=${msg}`, "_blank", "noopener,noreferrer");
+      toast.success("Redirecionando para o WhatsApp...");
+      setLoading(false);
+      (e.target as HTMLFormElement).reset();
+      close();
+    }, 300);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={(o) => (o ? null : close())}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="text-xl">Fale com um especialista</DialogTitle>
+          <DialogDescription>
+            Preencha rapidamente e abrimos seu WhatsApp com a mensagem pronta.
+          </DialogDescription>
+        </DialogHeader>
+        <form onSubmit={onSubmit} className="space-y-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="modal-nome" className="text-sm">Nome</Label>
+            <Input id="modal-nome" name="nome" placeholder="Seu nome completo" className="h-11" required />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="modal-telefone" className="text-sm">Telefone / WhatsApp</Label>
+            <Input id="modal-telefone" name="telefone" type="tel" placeholder="(00) 00000-0000" className="h-11" required />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="modal-servico" className="text-sm">Qual serviço busca?</Label>
+            <select
+              id="modal-servico"
+              name="servico"
+              required
+              defaultValue=""
+              className="flex h-11 w-full rounded-md border border-border bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            >
+              <option value="" disabled>Selecione...</option>
+              {SERVICES.map((s) => (
+                <option key={s} value={s}>{s}</option>
+              ))}
+              <option value="Outro">Outro</option>
+            </select>
+          </div>
+          <Button
+            type="submit"
+            disabled={loading}
+            className="btn-metallic h-12 w-full text-base font-semibold"
+          >
+            {loading ? "Enviando..." : "Abrir WhatsApp"}
+          </Button>
+          <p className="text-center text-xs text-muted-foreground">
+            Ao enviar, você concorda em receber contato comercial da In Black Toner.
+          </p>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
