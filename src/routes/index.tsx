@@ -997,19 +997,14 @@ function LeadModal() {
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="modal-servico" className="text-sm">Qual serviço busca?</Label>
-            <select
+            <Input
               id="modal-servico"
               name="servico"
+              type="text"
+              placeholder="Ex: Aluguel de multifuncional"
+              className="h-11"
               required
-              defaultValue=""
-              className="flex h-11 w-full rounded-md border border-border bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            >
-              <option value="" disabled>Selecione...</option>
-              {SERVICES.map((s) => (
-                <option key={s} value={s}>{s}</option>
-              ))}
-              <option value="Outro">Outro</option>
-            </select>
+            />
           </div>
           <Button
             type="submit"
