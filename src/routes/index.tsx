@@ -65,7 +65,7 @@ const WHATSAPP_URL = "https://wa.me/5524999313230";
 const PHONE_DISPLAY = "(24) 99931-3230";
 
 // Webhook para receber os leads (será preenchido pelo usuário)
-const LEAD_WEBHOOK_URL = "";
+const LEAD_WEBHOOK_URL = "https://hook.us1.make.celonis.com/j59u2x3r3eyijkc8hjltu2nbwa17guek";
 
 async function sendLeadToWebhook(payload: Record<string, unknown>) {
   if (!LEAD_WEBHOOK_URL) return;
