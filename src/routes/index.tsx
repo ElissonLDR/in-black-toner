@@ -109,6 +109,25 @@ function useLeadModalState() {
   return useSyncExternalStore(leadStore.subscribe, leadStore.getSnapshot, leadStore.getSnapshot);
 }
 
+const trackLeadConversion = () => {
+  if (typeof window === "undefined") return;
+  const w = window as unknown as {
+    gtag?: (...args: unknown[]) => void;
+    fbq?: (...args: unknown[]) => void;
+    dataLayer?: unknown[];
+  };
+  try {
+    w.gtag?.("event", "conversion", {
+      send_to: "AW-780139321/HlDtCM6Dt78cELn2__MC",
+    });
+    w.fbq?.("track", "Lead");
+    w.dataLayer?.push({ event: "lead_whatsapp" });
+  } catch {
+    // noop
+  }
+};
+
+
 
 const BRANDS: { name: string; src: string }[] = [
   { name: "HP", src: hpLogo },
