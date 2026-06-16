@@ -326,17 +326,12 @@ function MobileMenu() {
             ))}
           </nav>
           <SheetClose asChild>
-            <a
-              href={WHATSAPP_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={trackLeadConversion}
-              className="mt-8 block"
+            <Button
+              onClick={() => openLeadModal("mobile-menu")}
+              className="btn-metallic mt-8 h-12 w-full font-semibold"
             >
-              <Button className="btn-metallic h-12 w-full font-semibold">
-                Falar no WhatsApp
-              </Button>
-            </a>
+              Falar no WhatsApp
+            </Button>
           </SheetClose>
         </div>
       </SheetContent>
