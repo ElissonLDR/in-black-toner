@@ -39,6 +39,13 @@ import {
   Quote, User,
 } from "lucide-react";
 import { z } from "zod";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/")({
   component: LandingPage,
