@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, type FormEvent } from "react";
 import heroPrinter from "@/assets/hero-printer.jpg";
 import brandLogo from "@/assets/logo-inblacktoner.png";
 import hpLogo from "@/assets/brands/hp.png";
