@@ -70,17 +70,23 @@ const LEAD_WEBHOOK_URL = "https://hook.us1.make.celonis.com/j59u2x3r3eyijkc8hjlt
 async function sendLeadToWebhook(payload: Record<string, unknown>) {
   if (!LEAD_WEBHOOK_URL) return;
   try {
+    const fullPayload: Record<string, unknown> = {
+      ...payload,
+      source: "landing-inblacktoner",
+      createdAt: new Date().toISOString(),
+      url: typeof window !== "undefined" ? window.location.href : undefined,
+      userAgent: typeof navigator !== "undefined" ? navigator.userAgent : undefined,
+    };
+    const form = new URLSearchParams();
+    for (const [key, value] of Object.entries(fullPayload)) {
+      if (value === undefined || value === null) continue;
+      form.append(key, typeof value === "string" ? value : String(value));
+    }
     await fetch(LEAD_WEBHOOK_URL, {
       method: "POST",
       mode: "no-cors",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ...payload,
-        source: "landing-inblacktoner",
-        createdAt: new Date().toISOString(),
-        url: typeof window !== "undefined" ? window.location.href : undefined,
-        userAgent: typeof navigator !== "undefined" ? navigator.userAgent : undefined,
-      }),
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: form.toString(),
     });
   } catch {
     // noop — não bloqueia o redirect
