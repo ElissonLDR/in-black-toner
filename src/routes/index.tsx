@@ -862,11 +862,13 @@ function FinalCTA() {
           Fale agora com um especialista e receba uma proposta personalizada.
         </p>
         <div className="mt-10 flex flex-col items-center gap-4" data-reveal>
-          <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" onClick={trackLeadConversion}>
-            <Button size="lg" className="btn-metallic h-16 px-10 text-lg font-bold">
-              Falar no WhatsApp agora
-            </Button>
-          </a>
+          <Button
+            size="lg"
+            onClick={() => openLeadModal("final-cta")}
+            className="btn-metallic h-16 px-10 text-lg font-bold"
+          >
+            Falar no WhatsApp agora
+          </Button>
           <a href={`tel:+5524999313230`} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
             {PHONE_DISPLAY}
           </a>
