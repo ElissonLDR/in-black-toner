@@ -280,17 +280,13 @@ function Header() {
             </a>
           ))}
         </nav>
-        <a
-          href={WHATSAPP_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={trackLeadConversion}
-          className="hidden lg:inline-flex"
+        <Button
+          size="sm"
+          onClick={() => openLeadModal("header")}
+          className="btn-metallic hidden font-semibold lg:inline-flex"
         >
-          <Button size="sm" className="btn-metallic font-semibold">
-            Falar no WhatsApp
-          </Button>
-        </a>
+          Falar no WhatsApp
+        </Button>
         <MobileMenu />
       </div>
     </header>
