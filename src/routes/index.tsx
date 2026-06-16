@@ -742,6 +742,14 @@ function LeadForm() {
     setLoading(true);
     const { nome, numero, email, cidade, servico } = parsed.data;
     const msg = `Olá! Meu nome é ${nome}.%0ATelefone: ${numero}%0AE-mail: ${email}%0ACidade: ${cidade}%0AServiço: ${servico}%0AGostaria de uma proposta.`;
+    void sendLeadToWebhook({
+      origin: "lead-form",
+      nome,
+      telefone: numero,
+      email,
+      cidade,
+      servico,
+    });
     setTimeout(() => {
       trackLeadConversion();
       window.open(`${WHATSAPP_URL}?text=${msg}`, "_blank", "noopener,noreferrer");
@@ -750,6 +758,7 @@ function LeadForm() {
       (e.target as HTMLFormElement).reset();
     }, 300);
   };
+
 
   return (
     <section id="formulario" className="container mx-auto px-4 py-20 md:py-28">
