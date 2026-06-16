@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, type FormEvent } from "react";
 import heroPrinter from "@/assets/hero-printer.jpg";
 import brandLogo from "@/assets/logo-inblacktoner.png";
 import hpLogo from "@/assets/brands/hp.png";
@@ -39,6 +39,13 @@ import {
   Quote, User,
 } from "lucide-react";
 import { z } from "zod";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/")({
   component: LandingPage,
@@ -57,6 +64,51 @@ export const Route = createFileRoute("/")({
 const WHATSAPP_URL = "https://wa.me/5524999313230";
 const PHONE_DISPLAY = "(24) 99931-3230";
 
+// Webhook para receber os leads (será preenchido pelo usuário)
+const LEAD_WEBHOOK_URL = "";
+
+async function sendLeadToWebhook(payload: Record<string, unknown>) {
+  if (!LEAD_WEBHOOK_URL) return;
+  try {
+    await fetch(LEAD_WEBHOOK_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...payload,
+        source: "landing-inblacktoner",
+        createdAt: new Date().toISOString(),
+        url: typeof window !== "undefined" ? window.location.href : undefined,
+        userAgent: typeof navigator !== "undefined" ? navigator.userAgent : undefined,
+      }),
+    });
+  } catch {
+    // noop — não bloqueia o redirect
+  }
+}
+
+// ---- Store simples para abrir o modal de lead a partir de qualquer botão ----
+type LeadModalState = { open: boolean; origin: string };
+let leadState: LeadModalState = { open: false, origin: "" };
+const leadListeners = new Set<() => void>();
+const leadStore = {
+  subscribe(cb: () => void) {
+    leadListeners.add(cb);
+    return () => leadListeners.delete(cb);
+  },
+  getSnapshot: () => leadState,
+  set(next: LeadModalState) {
+    leadState = next;
+    leadListeners.forEach((l) => l());
+  },
+};
+function openLeadModal(origin: string) {
+  leadStore.set({ open: true, origin });
+}
+function useLeadModalState() {
+  return useSyncExternalStore(leadStore.subscribe, leadStore.getSnapshot, leadStore.getSnapshot);
+}
+
 const trackLeadConversion = () => {
   if (typeof window === "undefined") return;
   const w = window as unknown as {
@@ -74,6 +126,8 @@ const trackLeadConversion = () => {
     // noop
   }
 };
+
+
 
 const BRANDS: { name: string; src: string }[] = [
   { name: "HP", src: hpLogo },
@@ -189,10 +243,12 @@ function LandingPage() {
       <FinalCTA />
       <Footer />
       <FloatingWhatsApp />
+      <LeadModal />
       <Toaster richColors theme="dark" position="top-center" />
     </div>
   );
 }
+
 
 const NAV_LINKS: { href: string; targetId: string; label: string }[] = [
   { href: "#solucao", targetId: "solucao", label: "Soluções" },
@@ -226,17 +282,13 @@ function Header() {
             </a>
           ))}
         </nav>
-        <a
-          href={WHATSAPP_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={trackLeadConversion}
-          className="hidden lg:inline-flex"
+        <Button
+          size="sm"
+          onClick={() => openLeadModal("header")}
+          className="btn-metallic hidden font-semibold lg:inline-flex"
         >
-          <Button size="sm" className="btn-metallic font-semibold">
-            Falar no WhatsApp
-          </Button>
-        </a>
+          Falar no WhatsApp
+        </Button>
         <MobileMenu />
       </div>
     </header>
@@ -276,17 +328,12 @@ function MobileMenu() {
             ))}
           </nav>
           <SheetClose asChild>
-            <a
-              href={WHATSAPP_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={trackLeadConversion}
-              className="mt-8 block"
+            <Button
+              onClick={() => openLeadModal("mobile-menu")}
+              className="btn-metallic mt-8 h-12 w-full font-semibold"
             >
-              <Button className="btn-metallic h-12 w-full font-semibold">
-                Falar no WhatsApp
-              </Button>
-            </a>
+              Falar no WhatsApp
+            </Button>
           </SheetClose>
         </div>
       </SheetContent>
@@ -329,11 +376,13 @@ function Hero() {
             Manutenção preventiva, suporte técnico e insumos incluídos — tudo em um único contrato.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3 lg:justify-start">
-            <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" onClick={trackLeadConversion}>
-              <Button size="lg" className="btn-metallic h-14 px-7 text-base font-semibold">
-                Quero alugar agora via WhatsApp
-              </Button>
-            </a>
+            <Button
+              size="lg"
+              onClick={() => openLeadModal("hero")}
+              className="btn-metallic h-14 px-7 text-base font-semibold"
+            >
+              Quero alugar agora via WhatsApp
+            </Button>
             <a href="#formulario" onClick={(e) => smoothScrollTo(e, "formulario")}>
               <Button size="lg" className="btn-metallic-outline h-14 px-7 text-base font-semibold">
                 Solicitar proposta
@@ -589,11 +638,13 @@ function HowItWorks() {
         ))}
       </ol>
       <div className="mt-10 flex justify-center" data-reveal>
-        <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" onClick={trackLeadConversion}>
-          <Button size="lg" className="btn-metallic font-semibold">
-            Começar agora
-          </Button>
-        </a>
+        <Button
+          size="lg"
+          onClick={() => openLeadModal("como-funciona")}
+          className="btn-metallic font-semibold"
+        >
+          Começar agora
+        </Button>
       </div>
     </section>
   );
@@ -693,6 +744,14 @@ function LeadForm() {
     setLoading(true);
     const { nome, numero, email, cidade, servico } = parsed.data;
     const msg = `Olá! Meu nome é ${nome}.%0ATelefone: ${numero}%0AE-mail: ${email}%0ACidade: ${cidade}%0AServiço: ${servico}%0AGostaria de uma proposta.`;
+    void sendLeadToWebhook({
+      origin: "lead-form",
+      nome,
+      telefone: numero,
+      email,
+      cidade,
+      servico,
+    });
     setTimeout(() => {
       trackLeadConversion();
       window.open(`${WHATSAPP_URL}?text=${msg}`, "_blank", "noopener,noreferrer");
@@ -701,6 +760,7 @@ function LeadForm() {
       (e.target as HTMLFormElement).reset();
     }, 300);
   };
+
 
   return (
     <section id="formulario" className="container mx-auto px-4 py-20 md:py-28">
@@ -813,11 +873,13 @@ function FinalCTA() {
           Fale agora com um especialista e receba uma proposta personalizada.
         </p>
         <div className="mt-10 flex flex-col items-center gap-4" data-reveal>
-          <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" onClick={trackLeadConversion}>
-            <Button size="lg" className="btn-metallic h-16 px-10 text-lg font-bold">
-              Falar no WhatsApp agora
-            </Button>
-          </a>
+          <Button
+            size="lg"
+            onClick={() => openLeadModal("final-cta")}
+            className="btn-metallic h-16 px-10 text-lg font-bold"
+          >
+            Falar no WhatsApp agora
+          </Button>
           <a href={`tel:+5524999313230`} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
             {PHONE_DISPLAY}
           </a>
@@ -847,16 +909,14 @@ function Footer() {
 
 function FloatingWhatsApp() {
   return (
-    <a
-      href={WHATSAPP_URL}
-      target="_blank"
-      rel="noopener noreferrer"
-      onClick={trackLeadConversion}
+    <button
+      type="button"
+      onClick={() => openLeadModal("floating")}
       aria-label="Falar no WhatsApp"
       className="btn-metallic animate-pulse-glow fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full transition-transform hover:scale-105"
     >
       <WhatsAppIcon className="h-7 w-7" />
-    </a>
+    </button>
   );
 }
 
@@ -870,5 +930,99 @@ function WhatsAppIcon({ className }: { className?: string }) {
     >
       <path d="M19.11 17.205c-.372 0-1.088 1.39-1.518 1.39a.63.63 0 01-.315-.1c-.802-.402-1.504-.817-2.163-1.447-.545-.516-1.146-1.29-1.46-1.963a.426.426 0 01-.073-.215c0-.33.99-.945.99-1.49 0-.143-.73-2.09-.832-2.335-.143-.372-.214-.487-.6-.487-.187 0-.36-.043-.53-.043-.302 0-.53.115-.746.315-.688.645-1.032 1.318-1.06 2.264v.114c-.015.99.472 1.977 1.017 2.78 1.23 1.82 2.506 3.41 4.554 4.34.616.287 2.035 1.043 2.722 1.043.847 0 2.521-.515 2.722-1.39.029-.13.029-.244.029-.387 0-.703-1.475-1.243-1.79-1.39zM16.029 28.493c-2.392 0-4.7-.685-6.749-1.952l-4.829 1.547 1.578-4.715a12.486 12.486 0 01-2.235-7.155c0-6.954 5.643-12.6 12.6-12.6 3.366 0 6.531 1.31 8.91 3.693a12.486 12.486 0 013.69 8.907c0 6.957-5.658 12.6-12.615 12.6h-.35zm0-23.087c-5.79 0-10.5 4.71-10.5 10.5 0 2.314.738 4.523 2.142 6.385l-1.392 4.16 4.275-1.365a10.471 10.471 0 005.586 1.62h.305c5.79 0 10.5-4.71 10.5-10.5 0-2.806-1.092-5.443-3.077-7.428a10.45 10.45 0 00-7.42-3.077z" />
     </svg>
+  );
+}
+
+// ---------- Lead Modal (abre a partir de qualquer botão de WhatsApp) ----------
+const modalSchema = z.object({
+  nome: z.string().trim().min(2, "Informe seu nome").max(100),
+  telefone: z.string().trim().min(8, "Informe um telefone válido").max(20),
+  servico: z.string().trim().min(2, "Selecione um serviço").max(120),
+});
+
+function LeadModal() {
+  const { open, origin } = useLeadModalState();
+  const [loading, setLoading] = useState(false);
+
+  const close = () => leadStore.set({ open: false, origin: "" });
+
+  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    const parsed = modalSchema.safeParse({
+      nome: fd.get("nome"),
+      telefone: fd.get("telefone"),
+      servico: fd.get("servico"),
+    });
+    if (!parsed.success) {
+      toast.error(parsed.error.issues[0]?.message ?? "Verifique os campos");
+      return;
+    }
+    setLoading(true);
+    const { nome, telefone, servico } = parsed.data;
+    void sendLeadToWebhook({
+      origin: `modal:${origin || "unknown"}`,
+      nome,
+      telefone,
+      servico,
+    });
+    const msg = `Olá! Meu nome é ${nome}.%0ATelefone: ${telefone}%0AServiço: ${servico}%0AGostaria de uma proposta.`;
+    setTimeout(() => {
+      trackLeadConversion();
+      window.open(`${WHATSAPP_URL}?text=${msg}`, "_blank", "noopener,noreferrer");
+      toast.success("Redirecionando para o WhatsApp...");
+      setLoading(false);
+      (e.target as HTMLFormElement).reset();
+      close();
+    }, 300);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={(o) => (o ? null : close())}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="text-xl">Fale com um especialista</DialogTitle>
+          <DialogDescription>
+            Preencha rapidamente e abrimos seu WhatsApp com a mensagem pronta.
+          </DialogDescription>
+        </DialogHeader>
+        <form onSubmit={onSubmit} className="space-y-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="modal-nome" className="text-sm">Nome</Label>
+            <Input id="modal-nome" name="nome" placeholder="Seu nome completo" className="h-11" required />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="modal-telefone" className="text-sm">Telefone / WhatsApp</Label>
+            <Input id="modal-telefone" name="telefone" type="tel" placeholder="(00) 00000-0000" className="h-11" required />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="modal-servico" className="text-sm">Qual serviço busca?</Label>
+            <select
+              id="modal-servico"
+              name="servico"
+              required
+              defaultValue=""
+              className="flex h-11 w-full rounded-md border border-border bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            >
+              <option value="" disabled>Selecione...</option>
+              {SERVICES.map((s) => (
+                <option key={s} value={s}>{s}</option>
+              ))}
+              <option value="Outro">Outro</option>
+            </select>
+          </div>
+          <Button
+            type="submit"
+            disabled={loading}
+            className="btn-metallic h-12 w-full text-base font-semibold"
+          >
+            {loading ? "Enviando..." : "Abrir WhatsApp"}
+          </Button>
+          <p className="text-center text-xs text-muted-foreground">
+            Ao enviar, você concorda em receber contato comercial da In Black Toner.
+          </p>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
