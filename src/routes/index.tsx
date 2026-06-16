@@ -1006,7 +1006,7 @@ function LeadModal() {
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="modal-telefone" className="text-sm">Telefone / WhatsApp</Label>
-            <Input id="modal-telefone" name="telefone" type="tel" placeholder="(00) 00000-0000" className="h-11" required />
+            <Input id="modal-telefone" name="telefone" type="tel" inputMode="tel" placeholder="(00) 00000-0000" className="h-11" maxLength={16} onInput={(e) => { const t = e.currentTarget; t.value = formatPhoneBR(t.value); }} required />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="modal-servico" className="text-sm">Qual serviço busca?</Label>
