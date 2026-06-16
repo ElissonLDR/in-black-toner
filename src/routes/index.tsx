@@ -64,23 +64,51 @@ export const Route = createFileRoute("/")({
 const WHATSAPP_URL = "https://wa.me/5524999313230";
 const PHONE_DISPLAY = "(24) 99931-3230";
 
-const trackLeadConversion = () => {
-  if (typeof window === "undefined") return;
-  const w = window as unknown as {
-    gtag?: (...args: unknown[]) => void;
-    fbq?: (...args: unknown[]) => void;
-    dataLayer?: unknown[];
-  };
+// Webhook para receber os leads (será preenchido pelo usuário)
+const LEAD_WEBHOOK_URL = "";
+
+async function sendLeadToWebhook(payload: Record<string, unknown>) {
+  if (!LEAD_WEBHOOK_URL) return;
   try {
-    w.gtag?.("event", "conversion", {
-      send_to: "AW-780139321/HlDtCM6Dt78cELn2__MC",
+    await fetch(LEAD_WEBHOOK_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...payload,
+        source: "landing-inblacktoner",
+        createdAt: new Date().toISOString(),
+        url: typeof window !== "undefined" ? window.location.href : undefined,
+        userAgent: typeof navigator !== "undefined" ? navigator.userAgent : undefined,
+      }),
     });
-    w.fbq?.("track", "Lead");
-    w.dataLayer?.push({ event: "lead_whatsapp" });
   } catch {
-    // noop
+    // noop — não bloqueia o redirect
   }
+}
+
+// ---- Store simples para abrir o modal de lead a partir de qualquer botão ----
+type LeadModalState = { open: boolean; origin: string };
+let leadState: LeadModalState = { open: false, origin: "" };
+const leadListeners = new Set<() => void>();
+const leadStore = {
+  subscribe(cb: () => void) {
+    leadListeners.add(cb);
+    return () => leadListeners.delete(cb);
+  },
+  getSnapshot: () => leadState,
+  set(next: LeadModalState) {
+    leadState = next;
+    leadListeners.forEach((l) => l());
+  },
 };
+function openLeadModal(origin: string) {
+  leadStore.set({ open: true, origin });
+}
+function useLeadModalState() {
+  return useSyncExternalStore(leadStore.subscribe, leadStore.getSnapshot, leadStore.getSnapshot);
+}
+
 
 const BRANDS: { name: string; src: string }[] = [
   { name: "HP", src: hpLogo },
