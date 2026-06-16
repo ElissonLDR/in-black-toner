@@ -913,7 +913,7 @@ function FloatingWhatsApp() {
       type="button"
       onClick={() => openLeadModal("floating")}
       aria-label="Falar no WhatsApp"
-      className="btn-metallic animate-pulse-glow fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full transition-transform hover:scale-105"
+      className="btn-metallic animate-pulse-glow fixed bottom-6 right-6 z-50 flex h-14 w-14 cursor-pointer items-center justify-center rounded-full transition-transform hover:scale-105"
     >
       <WhatsAppIcon className="h-7 w-7" />
     </button>
