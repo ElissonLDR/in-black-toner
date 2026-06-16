@@ -67,6 +67,13 @@ const PHONE_DISPLAY = "(24) 99931-3230";
 // Webhook para receber os leads (será preenchido pelo usuário)
 const LEAD_WEBHOOK_URL = "https://hook.us1.make.celonis.com/j59u2x3r3eyijkc8hjltu2nbwa17guek";
 
+// E-mails que devem receber a notificação de novo lead (configure no Make.com um módulo de e-mail usando este campo)
+const LEAD_NOTIFY_EMAILS = [
+  "Kris.lana@inblacktoner.com.br",
+  "caioamorim@v4company.com",
+  "caroline.ferreira@v4company.com",
+];
+
 async function sendLeadToWebhook(payload: Record<string, unknown>) {
   if (!LEAD_WEBHOOK_URL) return;
   try {
@@ -76,7 +83,12 @@ async function sendLeadToWebhook(payload: Record<string, unknown>) {
       createdAt: new Date().toISOString(),
       url: typeof window !== "undefined" ? window.location.href : undefined,
       userAgent: typeof navigator !== "undefined" ? navigator.userAgent : undefined,
+      notify_emails: LEAD_NOTIFY_EMAILS.join(","),
+      notify_email_1: LEAD_NOTIFY_EMAILS[0],
+      notify_email_2: LEAD_NOTIFY_EMAILS[1],
+      notify_email_3: LEAD_NOTIFY_EMAILS[2],
     };
+
     const form = new URLSearchParams();
     for (const [key, value] of Object.entries(fullPayload)) {
       if (value === undefined || value === null) continue;
