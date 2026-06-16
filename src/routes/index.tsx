@@ -243,10 +243,12 @@ function LandingPage() {
       <FinalCTA />
       <Footer />
       <FloatingWhatsApp />
+      <LeadModal />
       <Toaster richColors theme="dark" position="top-center" />
     </div>
   );
 }
+
 
 const NAV_LINKS: { href: string; targetId: string; label: string }[] = [
   { href: "#solucao", targetId: "solucao", label: "Soluções" },
