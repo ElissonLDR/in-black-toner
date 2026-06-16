@@ -820,16 +820,29 @@ function LeadForm() {
   );
 }
 
+function formatPhoneBR(value: string) {
+  const d = value.replace(/\D/g, "").slice(0, 11);
+  if (d.length === 0) return "";
+  if (d.length < 3) return `(${d}`;
+  if (d.length <= 6) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
+  if (d.length <= 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+  return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+}
+
 function Field({ name, label, type = "text", placeholder }: { name: string; label: string; type?: string; placeholder?: string }) {
+  const isPhone = type === "tel" || name === "numero" || name === "telefone";
   return (
     <div className="space-y-1.5">
       <Label htmlFor={name} className="text-sm">{label}</Label>
       <Input
         id={name}
         name={name}
-        type={type}
+        type={isPhone ? "tel" : type}
+        inputMode={isPhone ? "tel" : undefined}
         placeholder={placeholder}
         className="h-11 border-border bg-background"
+        onInput={isPhone ? (e) => { const t = e.currentTarget; t.value = formatPhoneBR(t.value); } : undefined}
+        maxLength={isPhone ? 16 : undefined}
         required
       />
     </div>
@@ -993,7 +1006,7 @@ function LeadModal() {
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="modal-telefone" className="text-sm">Telefone / WhatsApp</Label>
-            <Input id="modal-telefone" name="telefone" type="tel" placeholder="(00) 00000-0000" className="h-11" required />
+            <Input id="modal-telefone" name="telefone" type="tel" inputMode="tel" placeholder="(00) 00000-0000" className="h-11" maxLength={16} onInput={(e) => { const t = e.currentTarget; t.value = formatPhoneBR(t.value); }} required />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="modal-servico" className="text-sm">Qual serviço busca?</Label>
