@@ -38,7 +38,7 @@ import {
   Instagram, Facebook, Menu,
   Quote, User,
 } from "lucide-react";
-import { z } from "zod";
+import { leadSchema, createWhatsAppMessage } from "@/lib/lead-data";
 import {
   Dialog,
   DialogContent,
@@ -55,6 +55,8 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "Alugue impressoras multifuncionais no RJ com manutenção, suporte e toner inclusos. +30 anos de experiência, +150 empresas atendidas. Fale no WhatsApp." },
       { property: "og:title", content: "Aluguel de Impressoras RJ | In Black Toner" },
       { property: "og:description", content: "Locação de impressoras com tudo incluso para sua empresa." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { property: "og:url", content: "/" },
     ],
     links: [{ rel: "canonical", href: "/" }],
@@ -209,14 +211,6 @@ const FAQS = [
   { q: "Como funciona o suporte técnico?", a: "Atendimento remoto imediato e visitas presenciais quando necessário, com SLA definido em contrato." },
   { q: "Posso alugar mais de um equipamento?", a: "Sim. Montamos parques de impressão completos, com diferentes modelos conforme a necessidade de cada setor." },
 ];
-
-const formSchema = z.object({
-  nome: z.string().trim().min(2, "Informe seu nome").max(100),
-  numero: z.string().trim().min(8, "Informe um telefone válido").max(20),
-  email: z.string().trim().email("E-mail inválido").max(200),
-  cidade: z.string().trim().min(2, "Informe a cidade").max(100),
-  servico: z.string().trim().min(2, "Informe o serviço").max(120),
-});
 
 function useReveal() {
   const ref = useRef<HTMLDivElement | null>(null);
@@ -748,11 +742,12 @@ function LeadForm() {
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
-    const parsed = formSchema.safeParse({
+    const parsed = leadSchema.safeParse({
       nome: fd.get("nome"),
-      numero: fd.get("numero"),
+      telefone: fd.get("numero"),
       email: fd.get("email"),
       cidade: fd.get("cidade"),
+      cargo: fd.get("cargo"),
       servico: fd.get("servico"),
     });
     if (!parsed.success) {
@@ -760,15 +755,10 @@ function LeadForm() {
       return;
     }
     setLoading(true);
-    const { nome, numero, email, cidade, servico } = parsed.data;
-    const msg = `Olá! Meu nome é ${nome}.%0ATelefone: ${numero}%0AE-mail: ${email}%0ACidade: ${cidade}%0AServiço: ${servico}%0AGostaria de uma proposta.`;
+    const msg = createWhatsAppMessage(parsed.data);
     void sendLeadToWebhook({
       origin: "lead-form",
-      nome,
-      telefone: numero,
-      email,
-      cidade,
-      servico,
+      ...parsed.data,
     });
     setTimeout(() => {
       trackLeadConversion();
@@ -816,6 +806,7 @@ function LeadForm() {
               <Field name="numero" label="Telefone / WhatsApp" placeholder="(00) 00000-0000" />
             </div>
             <Field name="email" label="E-mail" type="email" placeholder="voce@empresa.com" />
+            <Field name="cargo" label="Cargo" placeholder="Ex: Gerente administrativo" />
             <div className="grid gap-4 sm:grid-cols-2">
               <Field name="cidade" label="Cidade" placeholder="Ex: Rio de Janeiro" />
               <Field name="servico" label="Qual serviço busca" placeholder="Ex: Aluguel multifuncional" />
@@ -860,7 +851,7 @@ function Field({ name, label, type = "text", placeholder }: { name: string; labe
         placeholder={placeholder}
         className="h-11 border-border bg-background"
         onInput={isPhone ? (e) => { const t = e.currentTarget; t.value = formatPhoneBR(t.value); } : undefined}
-        maxLength={isPhone ? 16 : undefined}
+        maxLength={isPhone ? 16 : name === "email" ? 200 : name === "servico" ? 120 : 100}
         required
       />
     </div>
@@ -965,12 +956,6 @@ function WhatsAppIcon({ className }: { className?: string }) {
 }
 
 // ---------- Lead Modal (abre a partir de qualquer botão de WhatsApp) ----------
-const modalSchema = z.object({
-  nome: z.string().trim().min(2, "Informe seu nome").max(100),
-  telefone: z.string().trim().min(8, "Informe um telefone válido").max(20),
-  servico: z.string().trim().min(2, "Selecione um serviço").max(120),
-});
-
 function LeadModal() {
   const { open, origin } = useLeadModalState();
   const [loading, setLoading] = useState(false);
@@ -980,9 +965,12 @@ function LeadModal() {
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
-    const parsed = modalSchema.safeParse({
+    const parsed = leadSchema.safeParse({
       nome: fd.get("nome"),
       telefone: fd.get("telefone"),
+      email: fd.get("email"),
+      cidade: fd.get("cidade"),
+      cargo: fd.get("cargo"),
       servico: fd.get("servico"),
     });
     if (!parsed.success) {
@@ -990,14 +978,11 @@ function LeadModal() {
       return;
     }
     setLoading(true);
-    const { nome, telefone, servico } = parsed.data;
     void sendLeadToWebhook({
       origin: `modal:${origin || "unknown"}`,
-      nome,
-      telefone,
-      servico,
+      ...parsed.data,
     });
-    const msg = `Olá! Meu nome é ${nome}.%0ATelefone: ${telefone}%0AServiço: ${servico}%0AGostaria de uma proposta.`;
+    const msg = createWhatsAppMessage(parsed.data);
     setTimeout(() => {
       trackLeadConversion();
       window.open(`${WHATSAPP_URL}?text=${msg}`, "_blank", "noopener,noreferrer");
@@ -1010,7 +995,7 @@ function LeadModal() {
 
   return (
     <Dialog open={open} onOpenChange={(o) => (o ? null : close())}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-xl">Fale com um especialista</DialogTitle>
           <DialogDescription>
@@ -1020,11 +1005,23 @@ function LeadModal() {
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="space-y-1.5">
             <Label htmlFor="modal-nome" className="text-sm">Nome</Label>
-            <Input id="modal-nome" name="nome" placeholder="Seu nome completo" className="h-11" required />
+            <Input id="modal-nome" name="nome" placeholder="Seu nome completo" autoComplete="name" maxLength={100} className="h-11" required />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="modal-telefone" className="text-sm">Telefone / WhatsApp</Label>
             <Input id="modal-telefone" name="telefone" type="tel" inputMode="tel" placeholder="(00) 00000-0000" className="h-11" maxLength={16} onInput={(e) => { const t = e.currentTarget; t.value = formatPhoneBR(t.value); }} required />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="modal-email" className="text-sm">E-mail</Label>
+            <Input id="modal-email" name="email" type="email" autoComplete="email" placeholder="voce@empresa.com" maxLength={200} className="h-11" required />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="modal-cidade" className="text-sm">Cidade</Label>
+            <Input id="modal-cidade" name="cidade" autoComplete="address-level2" placeholder="Ex: Rio de Janeiro" maxLength={100} className="h-11" required />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="modal-cargo" className="text-sm">Cargo</Label>
+            <Input id="modal-cargo" name="cargo" autoComplete="organization-title" placeholder="Ex: Gerente administrativo" maxLength={100} className="h-11" required />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="modal-servico" className="text-sm">Qual serviço busca?</Label>
@@ -1033,6 +1030,7 @@ function LeadModal() {
               name="servico"
               type="text"
               placeholder="Ex: Aluguel de multifuncional"
+              maxLength={120}
               className="h-11"
               required
             />

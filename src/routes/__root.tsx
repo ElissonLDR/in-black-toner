@@ -6,6 +6,7 @@ import {
   useRouter,
   HeadContent,
   Scripts,
+  type ErrorComponentProps,
 } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
@@ -32,7 +33,7 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+function ErrorComponent({ error, reset }: ErrorComponentProps) {
   console.error(error);
   const router = useRouter();
 
@@ -82,8 +83,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:site", content: "@Lovable" },
       { name: "twitter:title", content: "In Black Toner — Aluguel de Impressoras no RJ" },
       { name: "twitter:description", content: "Aluguel de impressoras multifuncionais no Rio de Janeiro com manutenção, suporte técnico e insumos inclusos. +30 anos de mercado e +150 empresas atendidas." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/f87f9509-093f-4eec-9bd7-327d661bf6ef" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/f87f9509-093f-4eec-9bd7-327d661bf6ef" },
     ],
     links: [
       {
